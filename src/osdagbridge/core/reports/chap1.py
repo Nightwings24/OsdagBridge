@@ -1,7 +1,22 @@
 from osdagbridge.core.reports.report_utils import _tex
+from osdagbridge.core.reports.latex_builders import kv_table
 
 
 def ch1_project_info(m):
+    details = kv_table(
+        r"Project and Design Team Details",
+        [
+            (r"\textbf{Project Name}", _tex(m.project_name)),
+            (r"\textbf{Project Location}", _tex(m.project_location)),
+            (r"\textbf{Designer}", _tex(m.designer)),
+            (r"\textbf{Reviewer}", _tex(m.reviewer)),
+            (r"\textbf{Organization}", _tex(m.company)),
+            (r"\textbf{Client}", _tex(m.client)),
+            (r"\textbf{Software Version}", "OsdagBridge"),
+        ],
+        header=("Item", "Details"),
+        weights=(0.38, 0.62),
+    )
     return r"""
 \chapter{Project Information}
 
@@ -9,25 +24,7 @@ This section records all project metadata as entered by the designer.
 
 \section{Project and Design Team Details}
 \label{sec:project-details}
-
-\begin{tabular}{|L{5.5cm}|L{8.5cm}|}
-\hline
-\textbf{Project Name} & """ + _tex(m.project_name) + r""" \\
-\hline
-\textbf{Project Location} & """ + _tex(m.project_location) + r""" \\
-\hline
-\textbf{Designer} & """ + _tex(m.designer) + r""" \\
-\hline
-\textbf{Reviewer} & """ + _tex(m.reviewer) + r""" \\
-\hline
-\textbf{Organization} & """ + _tex(m.company) + r""" \\
-\hline
-\textbf{Client} & """ + _tex(m.client) + r""" \\
-\hline
-\textbf{Software Version} & OsdagBridge \\
-\hline
-\end{tabular}
-
+""" + details + r"""
 
 \section{Applicable Codes and Standards}
 \label{sec:codes}
@@ -44,5 +41,3 @@ This section records all project metadata as entered by the designer.
 \item Indian Standard (IS) 6006: Steel Bearings
 \end{itemize}
 """
-
-

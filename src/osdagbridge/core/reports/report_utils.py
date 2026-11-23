@@ -1,9 +1,10 @@
 from osdagbridge.core.utils.common import (
     KEY_MP_GD_MEMBER_ID,
     KEY_MP_GD_SELECT_GIRDER,
-    KEY_MP_GIRDER_DEPTH,
     KEY_TS_NO_OF_GIRDERS
 )
+
+# Figure helpers moved to latex_builders.figure() / figure_cell() (PyLaTeX).
 
 
 def _tex(value):
@@ -25,11 +26,22 @@ def _tex(value):
     return s
 
 
+def _fmt_number(val):
+    """Floats are shown with at most 3 decimals (trailing zeros dropped) so
+    binary artefacts such as 12.149999999999999 never reach the report."""
+    if isinstance(val, float):
+        if val != val:          # NaN
+            return ""
+        s = f"{val:.3f}".rstrip("0").rstrip(".")
+        return "0" if s == "-0" else s
+    return val
+
+
 def _render_value(source_dict, key, unit=""):
     val = source_dict.get(key)
     if val in ("", None):
         return ""
-    return _tex(val) + unit
+    return _tex(_fmt_number(val)) + unit
 
 
 def get_girder_entries(input_dict):
@@ -71,45 +83,3 @@ def get_girder_entries(input_dict):
         )
 
     return entries
-
-
-def _fig_or_placeholder(path, caption, width=r'0.9\textwidth'):
-    """Embed figure if path is provided (file already copied to assets), else show placeholder box.
-    path is the relative path as pdflatex will see it (e.g. 'assets/plan.png').
-    """
-    if path:
-        p = path.replace('\\', '/')
-        return (r'\begin{figure}[H]' + '\n'
-                r'\centering' + '\n'
-                r'\includegraphics[width=' + width + ']{' + p + '}\n'
-                r'\caption*{' + caption + '}\n'
-                r'\end{figure}')
-    return (r'\begin{figure}[H]' + '\n'
-            r'\centering' + '\n'
-            r'\fbox{\parbox{0.97\textwidth}{' + '\n'
-            r'\textit{[ PLACEHOLDER: ' + caption + r' ]}' + '\n'
-            r'}}' + '\n'
-            r'\caption*{' + caption + '}\n'
-            r'\end{figure}')
-
-def _fig_embed(path, caption, width=r'\textwidth', height=None):
-    """Embed a real figure when path is provided (already copied); otherwise use an fbox placeholder."""
-    if path:
-        p = path.replace('\\', '/')
-        opts = 'width=' + width
-        if height:
-            opts += ',height=' + height + ',keepaspectratio'
-        return (r'\begin{figure}[H]' + '\n'
-                r'\vspace{-0.5em}' + '\n'
-                r'\centering' + '\n'
-                r'\includegraphics[' + opts + ']{' + p + '}\n'
-                r'\vspace{0.5em}' + '\n'
-                r'\caption*{\small ' + caption + '}\n'
-                r'\vspace{-0.5em}' + '\n'
-                r'\end{figure}')
-    # fbox placeholder — matches template exactly
-    return (r'\noindent\fbox{\parbox{0.97\textwidth}{' + '\n'
-            r'\textit{[ PLACEHOLDER: ' + caption + r' ]}' + '\n'
-            r'}}')
-
-

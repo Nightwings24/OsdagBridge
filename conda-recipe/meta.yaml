@@ -41,6 +41,7 @@ requirements:
     - xarray
     - numpy
     - matplotlib-base
+    - pylatex
     - pyyaml
     - openpyxl
     - pandas

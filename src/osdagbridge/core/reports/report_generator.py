@@ -119,6 +119,7 @@ from osdagbridge.core.utils.common import (
 )
 
 from osdagbridge.core.reports.report_utils import _tex
+from osdagbridge.core.reports import styles as S
 from .executive_summary import executive_summary
 from .chap1 import ch1_project_info
 from .chap2 import ch2_input_parameters
@@ -148,15 +149,14 @@ logger = logging.getLogger(__name__)
 # ═══════════════════════════════════════════════════════════════════════════════
 
 def preamble(project_name, job_number, report_date, report_version='Rev 0'):
+    """Document preamble.  All visual parameters come from styles.py."""
     pn = _tex(project_name)
     jn = _tex(job_number)
     rd = _tex(report_date)
     rv = _tex(report_version)
-    return r"""
-\documentclass[12pt,a4paper]{report}
-
-% Packages
-\usepackage[a4paper, margin=1in]{geometry}
+    return (r"\documentclass[" + S.FONTS.base_size + "," + S.PAGE.paper + "]{"
+            + S.FONTS.document_class + "}\n"
+            + S.latex_packages() + r"""
 \usepackage{graphicx}
 \usepackage{amsmath}
 \usepackage{amssymb}
@@ -165,95 +165,37 @@ def preamble(project_name, job_number, report_date, report_version='Rev 0'):
 \usepackage{tabularx}
 \usepackage{float}
 \usepackage{fancyhdr}
-\usepackage[hidelinks]{hyperref}
-\usepackage{xcolor}
+\usepackage[table]{xcolor}
 \usepackage{setspace}
 \usepackage{enumitem}
 \usepackage{caption}
-
-\captionsetup{
-    labelfont=bf,
-    justification=raggedright,
-    singlelinecheck=false,
-    format=plain
-}
 \usepackage{subcaption}
 \usepackage{multirow}
 \usepackage{colortbl}
 \usepackage{longtable}
-\setlength{\LTleft}{\fill}
-\setlength{\LTright}{\fill}
 \usepackage{titlesec}
 \usepackage{titletoc}
 \usepackage{lastpage}
 \usepackage{makecell}
 \usepackage{etoolbox}
 \usepackage{needspace}
+\usepackage[hidelinks]{hyperref}
 
 \numberwithin{table}{chapter}
 \numberwithin{figure}{chapter}
-% Table layout and spacing: consistent padding, row height, and longtable pre/post skips
-\setlength{\tabcolsep}{6pt}
-\renewcommand{\arraystretch}{1.12}
-\setlength{\LTpre}{0pt}
-\setlength{\LTpost}{6pt}
-% Table rules (outline thickness) and small extra row height for clarity
-\setlength{\arrayrulewidth}{0.5pt}
-\setlength{\extrarowheight}{0.6pt}
-
-% Prevent tables from overflowing past the page bottom:
-% if fewer than 5 baseline-skips remain, break to the next page first.
-\BeforeBeginEnvironment{table}{\needspace{5\baselineskip}}
-\BeforeBeginEnvironment{longtable}{\needspace{5\baselineskip}}
-
-\definecolor{osdagGreen}{HTML}{91B014}
-
-\fancypagestyle{main}{
-  \fancyhf{}
-  \fancyhead[L]{""" + pn + r""" $|$ """ + jn + r"""}
-  \fancyhead[R]{""" + rd + r""" $|$ """ + rv + r"""}
-  \fancyfoot[L]{Osdag $|$ FOSSEE $|$ Indian Institute of Technology Bombay}
-  \fancyfoot[R]{Page \thepage\ of \pageref{LastPage}}
-  \renewcommand{\headrule}{\color{osdagGreen}\hrule width\headwidth height 1pt \vspace{2pt}}
-  \renewcommand{\footrule}{%
-    \ifbool{hasSDonPage}{%
-      \vspace{-20pt}%
-      \hbox to \headwidth{\textcolor{black}{\footnotesize\textit{* Software default value}}\hfil}%
-      \vspace{4pt}%
-    }{%
-      \vspace{-8pt}%
-    }%
-    \color{osdagGreen}\hrule width\headwidth height 1pt \vspace{6pt}%
-  }
-}
-\fancypagestyle{plain}{
-  \fancyhf{}
-  \fancyhead[L]{""" + pn + r""" $|$ """ + jn + r"""}
-  \fancyhead[R]{""" + rd + r""" $|$ """ + rv + r"""}
-  \fancyfoot[L]{Osdag $|$ FOSSEE $|$ Indian Institute of Technology Bombay}
-  \fancyfoot[R]{Page \thepage\ of \pageref{LastPage}}
-  \renewcommand{\headrule}{\color{osdagGreen}\hrule width\headwidth height 1pt \vspace{2pt}}
-  \renewcommand{\footrule}{%
-    \ifbool{hasSDonPage}{%
-      \vspace{-20pt}%
-      \hbox to \headwidth{\textcolor{black}{\footnotesize\textit{* Software default value}}\hfil}%
-      \vspace{4pt}%
-    }{%
-      \vspace{-8pt}%
-    }%
-    \color{osdagGreen}\hrule width\headwidth height 1pt \vspace{6pt}%
-  }
-}
-\fancypagestyle{firstpage}{
-  \fancyhf{}
-  \renewcommand{\headrulewidth}{0pt}
-  \fancyfoot[L]{Osdag $|$ FOSSEE $|$ Indian Institute of Technology Bombay}
-  \fancyfoot[R]{Page \thepage\ of \pageref{LastPage}}
-  \renewcommand{\footrule}{\vspace{-8pt}\color{osdagGreen}\hrule width\headwidth height 1pt \vspace{6pt}}
-}
-\pagestyle{main}
-\setstretch{1.15}
-
+\setlist{itemsep=2pt, topsep=4pt}
+% Unicode symbols that reach the report through backend strings
+\DeclareUnicodeCharacter{2264}{\ensuremath{\leq}}
+\DeclareUnicodeCharacter{2265}{\ensuremath{\geq}}
+\DeclareUnicodeCharacter{2212}{\ensuremath{-}}
+\DeclareUnicodeCharacter{03BB}{\ensuremath{\lambda}}
+\DeclareUnicodeCharacter{03C6}{\ensuremath{\phi}}
+\DeclareUnicodeCharacter{03C4}{\ensuremath{\tau}}
+\DeclareUnicodeCharacter{03C3}{\ensuremath{\sigma}}
+\DeclareUnicodeCharacter{0394}{\ensuremath{\Delta}}
+\DeclareUnicodeCharacter{2081}{\textsubscript{1}}
+\DeclareUnicodeCharacter{2082}{\textsubscript{2}}
+""" + S.latex_style_block(pn, jn, rd, rv) + S.latex_heading_block() + r"""
 % Custom Commands
 \newcommand{\placeholder}[1]{\textit{\textless #1\textgreater}}
 \newcommand{\todo}[1]{\colorbox{yellow}{TODO: #1}}
@@ -261,20 +203,12 @@ def preamble(project_name, job_number, report_date, report_version='Rev 0'):
 \newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
 \newcolumntype{R}[1]{>{\raggedleft\arraybackslash}p{#1}}
 
-% Software-default asterisk
-\newcommand{\sdstar}{\textsuperscript{*}}
-\newbool{hasSDonPage}
-\boolfalse{hasSDonPage}
-\newcommand{\markSD}{\global\booltrue{hasSDonPage}}
-\renewcommand{\sdstar}{\textsuperscript{*}\markSD{}}
-\AddToHook{shipout/before}{\global\boolfalse{hasSDonPage}}
-
 \title{\Large\textbf{OsdagBridge} \\ \normalsize Open Source Software for Steel Girder Bridge Design \\ \vspace{2cm} \large Design Report}
 \author{}
 \date{}
 
 \begin{document}
-"""
+""")
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -305,37 +239,41 @@ def title_page(m, osdag_logo, org_logo):
 \\[1cm]
 """
 
+    rows = [
+        ("Project Name", _tex(m.project_name)),
+        ("Project Location", _tex(m.project_location)),
+        ("Author / Designer", _tex(m.designer)),
+        ("Reviewer", _tex(m.reviewer)),
+        ("Organization", _tex(m.company)),
+        ("Client Name and Organization", _tex(m.client)),
+        ("Job Number", _tex(m.job_number)),
+        ("Date", _tex(m.report_date)),
+        ("Report Version", _tex(m.subtitle) if m.subtitle else ''),
+    ]
+    body = "\n".join(
+        r"\cellcolor{" + S.TABLE.header_fill + r"}\textbf{" + k + "} & " + v + r" \\ \hline"
+        for k, v in rows)
+
     return r"""
 \begin{titlepage}
 \thispagestyle{firstpage}
 \centering
 \vspace*{1.5cm}
 """ + logos_tex + r"""
-{\Huge \textbf{OsdagBridge}}\\[0.3cm]
-{\large Open Source Software for Steel Girder Bridge Design}\\[1.5cm]
-{\Large Design Report}\\[1.5cm]
-\begin{tabular}{|L{4cm}|L{10cm}|}
+{\Huge\bfseries\color{osdagGreenDark} OsdagBridge}\\[0.3cm]
+{\large Open Source Software for Steel Girder Bridge Design}\\[0.6cm]
+{\color{osdagGreen}\rule{0.6\textwidth}{1.2pt}}\\[0.6cm]
+{\LARGE Design Report}\\[1.5cm]
+\begingroup""" + S.FONTS.table_size + r"""
+\setlength{\osdagTW}{\dimexpr\linewidth-4\tabcolsep-3\arrayrulewidth\relax}
+\begin{tabular}{|>{\raggedright\arraybackslash}m{0.32\osdagTW}|>{\raggedright\arraybackslash}m{0.68\osdagTW}|}
 \hline
-\textbf{Project Name} & """ + _tex(m.project_name) + r""" \\
-\hline
-\textbf{Project Location} & """ + _tex(m.project_location) + r""" \\
-\hline
-\textbf{Author / Designer} & """ + _tex(m.designer) + r""" \\
-\hline
-\textbf{Reviewer} & """ + _tex(m.reviewer) + r""" \\
-\hline
-\textbf{Organization} & """ + _tex(m.company) + r""" \\
-\hline
-\textbf{Client Name and Organization} & """ + _tex(m.client) + r""" \\
-\hline
-\textbf{Job Number} & """ + _tex(m.job_number) + r""" \\
-\hline
-\textbf{Date} & """ + _tex(m.report_date) + r""" \\
-\hline
-\textbf{Report Version} & """ + (_tex(m.subtitle) if m.subtitle else '') + r""" \\
-\hline
+""" + body + r"""
 \end{tabular}
+\endgroup
 \end{titlepage}
+% titlepage resets the counter to 1; continue from the physical page number
+\setcounter{page}{2}
 """
 
 
@@ -344,34 +282,9 @@ def title_page(m, osdag_logo, org_logo):
 # ═══════════════════════════════════════════════════════════════════════════════
 
 def toc_section():
+    """Table of contents (styling lives in styles.latex_heading_block)."""
     return r"""
-% Chapter / TOC Formatting
-\titleformat{\chapter}[block]
-  {\normalfont\Large\bfseries\centering}{\thechapter}{1em}{}
-\titlespacing*{\chapter}{0pt}{0pt}{10pt}
-\setcounter{tocdepth}{2}
-
-% TOC styling using titletoc
-\titlecontents{chapter}[1.5em]
-  {\normalfont\vspace{2pt}}
-  {\contentslabel{1.5em}}
-  {\hspace*{-1.5em}}
-  {\hfill\contentspage}
-
-\titlecontents{section}[3.8em]
-  {\normalfont}
-  {\contentslabel{2.3em}}
-  {\hspace*{-2.3em}}
-  {\hfill\contentspage}
-
-\titlecontents{subsection}[7.0em]
-  {\normalfont}
-  {\contentslabel{3.2em}}
-  {\hspace*{-3.2em}}
-  {\hfill\contentspage}
-
 \newpage
-\renewcommand{\contentsname}{\centering\Large\bfseries Table of Contents}
 \tableofcontents
 """
 
@@ -833,6 +746,21 @@ _FIGURE_MAP = [
     ('defl_ll',               'defl_ll.png'),
 ]
 
+def _report_latex_log(log_path):
+    """Log LaTeX errors and layout warnings (overfull boxes) of the last pass."""
+    try:
+        with open(log_path, 'r', encoding='latin-1') as fh:
+            lines = fh.readlines()
+    except OSError:
+        return
+    errors = [l.strip() for l in lines if l.startswith('!')]
+    overfull = [l.strip() for l in lines if l.startswith('Overfull \\hbox')]
+    if errors:
+        logger.warning("pdflatex reported %d error(s); first: %s", len(errors), errors[0])
+    if overfull:
+        logger.info("pdflatex reported %d overfull box(es)", len(overfull))
+
+
 def generate_report(payload, request):
     # type: (ReportPayload, ReportRequest) -> ReportResult
     """Compile the full OsdagBridge Design Report to PDF (+ .tex source)."""
@@ -895,6 +823,11 @@ def generate_report(payload, request):
                 shutil.copy2(org_logo_src, os.path.join(tmp_assets, 'org_logo.png'))
                 org_logo_latex = 'assets/org_logo.png'
 
+            # Charts (UR summary, material quantities) are rendered by matplotlib
+            # into the build folder and embedded with PyLaTeX Figure objects.
+            tmp_charts = os.path.join(tmp_dir, 'charts')
+            os.makedirs(tmp_charts, exist_ok=True)
+
             # Compute and inject quantities for Chapter 7
             quantities = calculate_material_quantities(payload.inputs, payload.output_dict)
             payload.inputs.update(quantities)
@@ -924,11 +857,11 @@ def generate_report(payload, request):
             if 'analysis' in secs:
                 doc_parts.append(ch4_analysis(payload.analysis_summary, fig_paths, bridge, span_m))
             if 'design_checks' in secs:
-                doc_parts.append(ch5_design_checks(payload.design_checks, bridge))
+                doc_parts.append(ch5_design_checks(payload.design_checks, bridge, asset_dir=tmp_charts))
             if 'drawings' in secs and payload.options.include_figures:
                 doc_parts.append(ch6_drawings(fig_paths))
 
-            doc_parts.append(ch7_quantities(payload.inputs))
+            doc_parts.append(ch7_quantities(payload.inputs, payload.output_dict, asset_dir=tmp_charts))
 
             mode = str(payload.inputs.get(KEY_DESIGN_MODE, "Optimized")).strip().lower()
             is_custom = mode in {"custom", "customized"}
@@ -977,6 +910,12 @@ def generate_report(payload, request):
                 shutil.copy2(tmp_tex, tex_path)
             if os.path.exists(tmp_pdf):
                 shutil.copy2(tmp_pdf, pdf_path)
+            tmp_log = os.path.join(tmp_dir, request.file_stem + '.log')
+            if os.path.exists(tmp_log):
+                _report_latex_log(tmp_log)
+                if not os.path.exists(tmp_pdf):
+                    # keep the log next to the .tex so failures can be diagnosed
+                    shutil.copy2(tmp_log, os.path.join(request.output_dir, request.file_stem + '.log'))
 
         if os.path.exists(pdf_path):
             logger.info("Report generated: %s", pdf_path)

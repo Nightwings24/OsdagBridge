@@ -24,4 +24,5 @@ dependencies:
   - pip:
     - openseespy>=3.2.2.6
     - opsvis
+    - pylatex>=1.4
     - -e .
