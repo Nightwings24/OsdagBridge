@@ -1,20 +1,26 @@
 # OsdagBridge Report Generator: Technical Changes
 
 This document covers the refactoring of the PDF design report generator
-(`src/osdagbridge/core/reports/`). Two reports from the same design are in this
-folder:
+(`src/osdagbridge/core/reports/`). The generated reports are in this folder:
 
 | File | Produced by |
 |------|-------------|
 | `Report_Before.pdf` | Original `dev` code (commit `d74f56d`) |
-| `Report_After.pdf`  | Refactored code on branch `feature/report-generator-refactor` |
+| `Report_After.pdf`  | Refactored code, same design and same inputs as `Report_Before.pdf` |
+| `Report_After_GUI.pdf` | Refactored code, generated from the desktop GUI (*Design → Generate Report*) with real CAD figures |
 
-Both use the same design: a 30 m span, 7.5 m carriageway, footpaths on both
-sides, Mumbai, with the software default additional inputs. The reports were
-generated headlessly with `tools/generate_sample_report.py`, which follows the
-desktop *Design → Generate Report* path (see "Reproducing the reports" below).
-The 3D OCC views need the live desktop viewer, so they show as placeholders in
-both PDFs. The GUI fills them as before.
+`Report_Before.pdf` and `Report_After.pdf` use the same design: a 30 m span,
+7.5 m carriageway, footpaths on both sides, Mumbai, with the software default
+additional inputs. They were generated headlessly with
+`tools/generate_sample_report.py`, which follows the desktop *Design → Generate
+Report* path (see "Reproducing the reports" below). The 3D OCC views need the
+live desktop viewer, so they show as placeholders in these two PDFs.
+
+`Report_After_GUI.pdf` was produced in the desktop application for Pune (30 m
+span, 7.5 m carriageway, footpaths on both sides). In the Loading tab, Class AA
+Wheeled, Class 70R Bogie and Class SV braking were unticked. This shows that the
+vehicle live-load table follows the UI selection. This run is also the one in
+the demo video.
 
 ---
 
